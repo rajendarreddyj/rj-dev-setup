@@ -210,6 +210,7 @@ function Start-Installation {
     Install-ChocoPackage -PackageName "strawberryperl" -DisplayName "Perl"
     Install-ChocoPackage -PackageName "virtualbox" -DisplayName "Oracle VirtualBox"
     Install-ChocoPackage -PackageName "dbeaver" -DisplayName "DBeaver Community Edition"
+    Install-ChocoPackage -PackageName "visualvm" -DisplayName "VisualVM"
 
     # Utility software
     Write-Log "Installing Utility Software..."
@@ -292,6 +293,7 @@ function Start-Installation {
     Write-Host "- Perl" -ForegroundColor White
     Write-Host "- Oracle VirtualBox" -ForegroundColor White
     Write-Host "- DBeaver Community Edition" -ForegroundColor White
+    Write-Host "- VisualVM" -ForegroundColor White
     Write-Host "- Chocolatey GUI" -ForegroundColor White
     Write-Host "- WinMerge" -ForegroundColor White
     Write-Host "- WinSCP" -ForegroundColor White

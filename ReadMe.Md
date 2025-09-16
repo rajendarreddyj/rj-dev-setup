@@ -55,6 +55,7 @@ This repository contains a comprehensive PowerShell script that automatically in
 - **Adobe Acrobat Reader DC** - Industry-standard PDF viewer and annotator
 - **Bruno API Client** - Open-source API testing and collaboration tool
 - **PowerShell 7** - Next-generation command-line shell and scripting language
+- **VisualVM** - Java profiling and monitoring tool
 
 ### Web Browsers
 
