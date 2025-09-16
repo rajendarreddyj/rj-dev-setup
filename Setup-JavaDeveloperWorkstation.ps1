@@ -206,6 +206,8 @@ function Start-Installation {
     Write-Log "Installing Additional Tools..."
     Install-ChocoPackage -PackageName "git" -DisplayName "Git"
     Install-ChocoPackage -PackageName "nodejs" -DisplayName "Node.js"
+    Install-ChocoPackage -PackageName "python" -DisplayName "Python"
+    Install-ChocoPackage -PackageName "strawberryperl" -DisplayName "Perl"
     Install-ChocoPackage -PackageName "virtualbox" -DisplayName "Oracle VirtualBox"
     Install-ChocoPackage -PackageName "dbeaver" -DisplayName "DBeaver Community Edition"
 
@@ -229,7 +231,6 @@ function Start-Installation {
 
     # Web browsers
     Write-Log "Installing Web Browsers..."
-    Install-ChocoPackage -PackageName "googlechrome" -DisplayName "Google Chrome"
     Install-ChocoPackage -PackageName "firefox" -DisplayName "Mozilla Firefox"
 
     Write-Log "Setting up environment variables..." "INFO"
@@ -287,6 +288,8 @@ function Start-Installation {
     Write-Host "- Android Studio" -ForegroundColor White
     Write-Host "- Git" -ForegroundColor White
     Write-Host "- Node.js" -ForegroundColor White
+    Write-Host "- Python" -ForegroundColor White
+    Write-Host "- Perl" -ForegroundColor White
     Write-Host "- Oracle VirtualBox" -ForegroundColor White
     Write-Host "- DBeaver Community Edition" -ForegroundColor White
     Write-Host "- Chocolatey GUI" -ForegroundColor White
@@ -304,7 +307,6 @@ function Start-Installation {
     Write-Host "- Adobe Acrobat Reader DC" -ForegroundColor White
     Write-Host "- Bruno API Client" -ForegroundColor White
     Write-Host "- PowerShell 7" -ForegroundColor White
-    Write-Host "- Google Chrome" -ForegroundColor White
     Write-Host "- Mozilla Firefox" -ForegroundColor White
     Write-Host "`nLog file: $LogPath" -ForegroundColor Cyan
 }

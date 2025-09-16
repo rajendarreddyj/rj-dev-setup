@@ -25,6 +25,8 @@ This repository contains a comprehensive PowerShell script that automatically in
 - **Apache Tomcat** - Java web server and servlet container
 - **Git** - Version control system
 - **Node.js** - JavaScript runtime (useful for modern development)
+- **Python** - Popular programming language for scripting and data analysis
+- **Perl** - Powerful text processing language with regex capabilities
 
 ### IDEs & Editors
 
@@ -56,7 +58,6 @@ This repository contains a comprehensive PowerShell script that automatically in
 
 ### Web Browsers
 
-- **Google Chrome** - Fast and secure web browser
 - **Mozilla Firefox** - Privacy-focused web browser
 
 ### Environment Configuration
