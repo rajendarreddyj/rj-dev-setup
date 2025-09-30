@@ -19,7 +19,7 @@ This repository contains a comprehensive PowerShell script that automatically in
 
 ### Core Development Tools
 
-- **Microsoft OpenJDK 21** - Latest LTS Java version
+- **Microsoft OpenJDK 25** - Latest LTS Java version
 - **Apache Maven** - Build automation and dependency management
 - **Gradle** - Build automation tool
 - **Apache Tomcat** - Java web server and servlet container

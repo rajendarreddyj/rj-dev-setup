@@ -183,7 +183,7 @@ function Start-Installation {
     # Install Java JDK (if not skipped)
     if (!$SkipJava) {
         Write-Log "Installing Java JDK..."
-        Install-ChocoPackage -PackageName "microsoft-openjdk-21" -DisplayName "Microsoft OpenJDK 21"
+        Install-ChocoPackage -PackageName "microsoft-openjdk-25" -DisplayName "Microsoft OpenJDK 25"
     }
 
     # Install Build Tools
@@ -278,7 +278,7 @@ function Start-Installation {
     Write-Host "✓ Environment variables configured" -ForegroundColor Green
     Write-Host "✓ All tools should be available in new command prompt sessions" -ForegroundColor Green
     Write-Host "`nInstalled Tools:" -ForegroundColor Yellow
-    Write-Host "- Microsoft OpenJDK 21" -ForegroundColor White
+    Write-Host "- Microsoft OpenJDK 25" -ForegroundColor White
     Write-Host "- Apache Maven" -ForegroundColor White
     Write-Host "- Gradle" -ForegroundColor White
     Write-Host "- Apache Tomcat" -ForegroundColor White
