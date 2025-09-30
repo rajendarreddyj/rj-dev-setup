@@ -36,6 +36,15 @@ This repository contains a comprehensive PowerShell script that automatically in
 - **JetBrains Toolbox** - Manages all JetBrains IDEs from one place
 - **Android Studio** - Official Android development environment
 
+### Git & GitHub Tools
+
+- **Setup-github.ps1** - Automated GitHub SSH key setup and configuration
+  - Generates SSH keys for secure authentication
+  - Configures Git global settings
+  - Sets up SSH agent and adds keys
+  - Tests GitHub SSH connection
+  - Provides step-by-step guidance
+
 ### Additional Tools
 
 - **Oracle VirtualBox** - Virtualization platform for testing and development
@@ -82,13 +91,17 @@ This repository contains a comprehensive PowerShell script that automatically in
 
 1. **Open PowerShell as Administrator**
 2. **Navigate to the project directory**
-3. **Run the setup script:**
+3. **Run the setup scripts:**
 
 ```powershell
+# For Java development environment setup
 .\Setup-JavaDeveloperWorkstation.ps1
+
+# For GitHub SSH configuration
+.\Setup-github.ps1
 ```
 
-That's it! The script will handle everything automatically.
+That's it! The scripts will handle everything automatically.
 
 ## 🛠️ Advanced Usage
 
@@ -151,6 +164,7 @@ node --version
 ```text
 rj-dev-setup/
 ├── Setup-JavaDeveloperWorkstation.ps1    # Main setup script
+├── Setup-github.ps1                      # GitHub SSH configuration script
 ├── README.md                             # Detailed usage guide
 ```
 
