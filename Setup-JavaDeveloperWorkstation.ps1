@@ -39,12 +39,21 @@ function Test-Administrator {
 # Install Chocolatey if not present
 function Install-Chocolatey {
     Write-Log "Checking for Chocolatey..."
-    if (!(Get-Command choco -ErrorAction SilentlyContinue)) {
+    
+    # Check if Chocolatey is installed (check both command and installation path)
+    $chocoInstalled = (Get-Command choco -ErrorAction SilentlyContinue) -or (Test-Path "$env:ProgramData\chocolatey\choco.exe")
+    
+    if (!$chocoInstalled) {
         Write-Log "Installing Chocolatey..."
         try {
             Set-ExecutionPolicy Bypass -Scope Process -Force
             [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
             Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+            
+            # Refresh environment variables after installation
+            $env:ChocolateyInstall = "$env:ProgramData\chocolatey"
+            $env:PATH = "$env:ProgramData\chocolatey\bin;$env:PATH"
+            
             Write-Log "Chocolatey installed successfully" "SUCCESS"
         } catch {
             Write-Log "Failed to install Chocolatey: $($_.Exception.Message)" "ERROR"
@@ -52,6 +61,13 @@ function Install-Chocolatey {
         }
     } else {
         Write-Log "Chocolatey is already installed" "SUCCESS"
+        # Ensure ChocolateyInstall environment variable is set for this session
+        if (-not $env:ChocolateyInstall) {
+            $env:ChocolateyInstall = "$env:ProgramData\chocolatey"
+        }
+        # Upgrade Chocolatey to latest version
+        Write-Log "Upgrading Chocolatey to latest version..."
+        & "$env:ProgramData\chocolatey\choco.exe" upgrade chocolatey -y | Out-Null
     }
     return $true
 }
@@ -65,22 +81,25 @@ function Install-ChocoPackage {
     )
 
     Write-Log "Processing $DisplayName..."
+    
+    # Use full path to choco.exe to avoid PATH issues
+    $chocoExe = "$env:ProgramData\chocolatey\bin\choco.exe"
 
     try {
         if ($Force) {
             Write-Log "Installing/Updating $DisplayName (forced)..."
-            choco install $PackageName -y --force
+            & $chocoExe install $PackageName -y --force
         } else {
-            $installed = choco list --local-only | Select-String "^$PackageName "
+            $installed = & $chocoExe list --local-only | Select-String "^$PackageName "
             if ($installed) {
                 Write-Log "$DisplayName is already installed" "INFO"
                 if ($UpdateExisting) {
                     Write-Log "Updating $DisplayName..."
-                    choco upgrade $PackageName -y
+                    & $chocoExe upgrade $PackageName -y
                 }
             } else {
                 Write-Log "Installing $DisplayName..."
-                choco install $PackageName -y
+                & $chocoExe install $PackageName -y
             }
         }
         Write-Log "$DisplayName processed successfully" "SUCCESS"
@@ -174,16 +193,21 @@ function Start-Installation {
         exit 1
     }
 
-    # Refresh environment variables for this session
-    $env:ChocolateyInstall = Convert-Path "$((Get-Command choco).Path)\..\.."
-    Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+    # Set Chocolatey environment for this session
+    $env:ChocolateyInstall = "$env:ProgramData\chocolatey"
+    
+    # Import Chocolatey profile if available
+    $chocoProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+    if (Test-Path $chocoProfile) {
+        Import-Module $chocoProfile -ErrorAction SilentlyContinue
+    }
 
     Write-Log "Installing Java Development Tools..." "INFO"
 
     # Install Java JDK (if not skipped)
     if (!$SkipJava) {
         Write-Log "Installing Java JDK..."
-        Install-ChocoPackage -PackageName "microsoft-openjdk-25" -DisplayName "Microsoft OpenJDK 25"
+        Install-ChocoPackage -PackageName "microsoft-openjdk-21" -DisplayName "Microsoft OpenJDK 21"
     }
 
     # Install Build Tools
