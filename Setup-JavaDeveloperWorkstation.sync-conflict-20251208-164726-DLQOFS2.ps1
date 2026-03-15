@@ -39,21 +39,12 @@ function Test-Administrator {
 # Install Chocolatey if not present
 function Install-Chocolatey {
     Write-Log "Checking for Chocolatey..."
-    
-    # Check if Chocolatey is installed (check both command and installation path)
-    $chocoInstalled = (Get-Command choco -ErrorAction SilentlyContinue) -or (Test-Path "$env:ProgramData\chocolatey\choco.exe")
-    
-    if (!$chocoInstalled) {
+    if (!(Get-Command choco -ErrorAction SilentlyContinue)) {
         Write-Log "Installing Chocolatey..."
         try {
             Set-ExecutionPolicy Bypass -Scope Process -Force
             [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
             Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-            
-            # Refresh environment variables after installation
-            $env:ChocolateyInstall = "$env:ProgramData\chocolatey"
-            $env:PATH = "$env:ProgramData\chocolatey\bin;$env:PATH"
-            
             Write-Log "Chocolatey installed successfully" "SUCCESS"
         } catch {
             Write-Log "Failed to install Chocolatey: $($_.Exception.Message)" "ERROR"
@@ -61,13 +52,6 @@ function Install-Chocolatey {
         }
     } else {
         Write-Log "Chocolatey is already installed" "SUCCESS"
-        # Ensure ChocolateyInstall environment variable is set for this session
-        if (-not $env:ChocolateyInstall) {
-            $env:ChocolateyInstall = "$env:ProgramData\chocolatey"
-        }
-        # Upgrade Chocolatey to latest version
-        Write-Log "Upgrading Chocolatey to latest version..."
-        & "$env:ProgramData\chocolatey\choco.exe" upgrade chocolatey -y | Out-Null
     }
     return $true
 }
@@ -81,25 +65,22 @@ function Install-ChocoPackage {
     )
 
     Write-Log "Processing $DisplayName..."
-    
-    # Use full path to choco.exe to avoid PATH issues
-    $chocoExe = "$env:ProgramData\chocolatey\bin\choco.exe"
 
     try {
         if ($Force) {
             Write-Log "Installing/Updating $DisplayName (forced)..."
-            & $chocoExe install $PackageName -y --force
+            choco install $PackageName -y --force
         } else {
-            $installed = & $chocoExe list --local-only | Select-String "^$PackageName "
+            $installed = choco list --local-only | Select-String "^$PackageName "
             if ($installed) {
                 Write-Log "$DisplayName is already installed" "INFO"
                 if ($UpdateExisting) {
                     Write-Log "Updating $DisplayName..."
-                    & $chocoExe upgrade $PackageName -y
+                    choco upgrade $PackageName -y
                 }
             } else {
                 Write-Log "Installing $DisplayName..."
-                & $chocoExe install $PackageName -y
+                choco install $PackageName -y
             }
         }
         Write-Log "$DisplayName processed successfully" "SUCCESS"
@@ -193,21 +174,16 @@ function Start-Installation {
         exit 1
     }
 
-    # Set Chocolatey environment for this session
-    $env:ChocolateyInstall = "$env:ProgramData\chocolatey"
-    
-    # Import Chocolatey profile if available
-    $chocoProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
-    if (Test-Path $chocoProfile) {
-        Import-Module $chocoProfile -ErrorAction SilentlyContinue
-    }
+    # Refresh environment variables for this session
+    $env:ChocolateyInstall = Convert-Path "$((Get-Command choco).Path)\..\.."
+    Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
 
     Write-Log "Installing Java Development Tools..." "INFO"
 
     # Install Java JDK (if not skipped)
     if (!$SkipJava) {
         Write-Log "Installing Java JDK..."
-        Install-ChocoPackage -PackageName "microsoft-openjdk25" -DisplayName "Microsoft OpenJDK 25"
+        Install-ChocoPackage -PackageName "microsoft-openjdk-25" -DisplayName "Microsoft OpenJDK 25"
     }
 
     # Install Build Tools
@@ -233,8 +209,6 @@ function Start-Installation {
     Install-ChocoPackage -PackageName "python" -DisplayName "Python"
     Install-ChocoPackage -PackageName "strawberryperl" -DisplayName "Perl"
     Install-ChocoPackage -PackageName "virtualbox" -DisplayName "Oracle VirtualBox"
-    Install-ChocoPackage -PackageName "podman-cli" -DisplayName "Podman CLI"
-    Install-ChocoPackage -PackageName "podman-desktop" -DisplayName "Podman Desktop"
     Install-ChocoPackage -PackageName "dbeaver" -DisplayName "DBeaver Community Edition"
     Install-ChocoPackage -PackageName "visualvm" -DisplayName "VisualVM"
 
@@ -318,8 +292,6 @@ function Start-Installation {
     Write-Host "- Python" -ForegroundColor White
     Write-Host "- Perl" -ForegroundColor White
     Write-Host "- Oracle VirtualBox" -ForegroundColor White
-    Write-Host "- Podman CLI" -ForegroundColor White
-    Write-Host "- Podman Desktop" -ForegroundColor White
     Write-Host "- DBeaver Community Edition" -ForegroundColor White
     Write-Host "- VisualVM" -ForegroundColor White
     Write-Host "- Chocolatey GUI" -ForegroundColor White
