@@ -207,7 +207,11 @@ function Start-Installation {
     # Install Java JDK (if not skipped)
     if (!$SkipJava) {
         Write-Log "Installing Java JDK..."
+<<<<<<< HEAD
         Install-ChocoPackage -PackageName "microsoft-openjdk25" -DisplayName "Microsoft OpenJDK 25"
+=======
+        Install-ChocoPackage -PackageName "microsoft-openjdk-21" -DisplayName "Microsoft OpenJDK 21"
+>>>>>>> 0313fe3acc18cd50f26f73edd81aab807dbb2ad2
     }
 
     # Install Build Tools
